@@ -1,9 +1,9 @@
 /*
  * @Author: accord
- * @FileName: user.js 						   
- * @Date:   2017-07-06 11:36:21 						   
- * @Last Modified by:   accord 	   
- * @Last Modified time: 2017-07-06 17:27:13 	   
+ * @FileName: user.js                          
+ * @Date:   2017-07-06 11:36:21                            
+ * @Last Modified by:   accord     
+ * @Last Modified time: 2017-07-09 23:31:46        
  */
 
 'use strict';
@@ -13,6 +13,7 @@ import { omit } from 'lodash';
 import jwt from 'jsonwebtoken';
 import expressJwt from 'express-jwt';
 import config from '../config';
+import UserModel from '../models/user';
 
 const router = module.exports = new Router();
 router.prefix = '/';
@@ -44,8 +45,20 @@ router.post('/user/login', (req, res) => {
     if (!username || !password) {
         return res.status(404).send({ error: 'You must send the username and the password' });
     }
-    if (username === 'admin', password === 'admin') {
-        const token = jwt.sign({}, config.token.secret, { expiresIn: config.token.expires, audience: config.token.audience, issuer: config.token.issuer });
-        return res.status(200).json({ token, message: 'success' });
-    }
+    UserModel.queryUser(username)
+        .then(user => {
+            if (!user) {
+                return res.status(401).send({ message: 'Incorrect username or password.' });
+            }
+            if (password !== user.password) {
+                return res.status(401).send({ message: 'Incorrect username or password.' });
+            }
+            if (username === user.username, password === user.password) {
+                const token = jwt.sign({}, config.token.secret, { expiresIn: config.token.expires, audience: config.token.audience, issuer: config.token.issuer });
+                return res.status(200).json({ token, message: 'success' });
+            }
+        })
+        .catch(err => {
+            return res.status(500).send({ error: err.message });
+        })
 });

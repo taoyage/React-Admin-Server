@@ -3,7 +3,7 @@
  * @FileName: config.js                            
  * @Date:   2017-07-06 11:12:46                            
  * @Last Modified by:   accord     
- * @Last Modified time: 2017-07-06 17:41:43        
+ * @Last Modified time: 2017-07-09 23:28:52        
  */
 
 'use strict';
@@ -13,6 +13,10 @@
  */
 export default {
     database: {
+        /**
+         * 连接数
+         */
+        'CONNECTIONLIMIT': 50,
         /**
          * 数据库主机名
          */
@@ -28,7 +32,7 @@ export default {
         /**
          * 数据库密码
          */
-        'ADMIN_DB_PASSWORD': 'root'
+        'ADMIN_DB_PASSWORD': '130578'
     },
     token: {
         secret: "beier",
